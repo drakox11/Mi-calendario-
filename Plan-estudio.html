@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Maestro — Data Analyst en 8 Meses</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0A0D12;--bg2:#111620;--bg3:#181E2A;--border:#1E2736;
+  --text:#E2E8F4;--muted:#64748B;--accent:#10B981;--accent2:#F59E0B;
+  --accent3:#6366F1;--purple:#A78BFA;--red:#EF4444;
+  --mono:'Space Mono',monospace;--sans:'Space Grotesk',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 60px;}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px;}
+
+/* HERO */
+.hero{text-align:center;padding:44px 20px 24px;}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
+.hero h1{font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:-1px;margin-bottom:10px;}
+.hero h1 .dim{color:var(--muted);font-size:0.6em;}
+.hero p{font-size:14px;color:var(--muted);max-width:520px;margin:0 auto;}
+.hero-stats{display:flex;gap:24px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+.hstat{text-align:center;}
+.hstat .v{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);}
+.hstat .l{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:1px;text-transform:uppercase;}
+.credit{font-family:var(--mono);font-size:10px;color:#374151;margin-top:16px;letter-spacing:1px;text-align:center;}
+
+/* NAV */
+.nav-wrap{position:sticky;top:0;z-index:100;background:rgba(10,13,18,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;margin-top:20px;}
+.nav-inner{max-width:900px;margin:0 auto;display:flex;gap:0;overflow-x:auto;}
+.nav-tab{
+  font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;
+  padding:14px 18px;color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;
+  transition:all .2s;background:none;border-left:none;border-right:none;border-top:none;
+}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.section{max-width:900px;margin:0 auto;padding:32px 20px;}
+
+.intro-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:18px 22px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.8;
+}
+.intro-box strong{color:var(--text);}
+
+/* ── HORARIO ── */
+.block{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;border-left:3px solid var(--accent3);}
+.block.rest{border-left-color:var(--red);}
+.block.review{border-left-color:var(--accent);}
+.block.spirit{border-left-color:var(--purple);}
+.block-head{display:flex;align-items:center;gap:14px;padding:14px 20px;}
+.block-time{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent2);min-width:110px;}
+.block.rest .block-time{color:var(--red);}
+.block.review .block-time{color:var(--accent);}
+.block.spirit .block-time{color:var(--purple);}
+.block-title{font-size:14px;font-weight:600;flex:1;}
+.block-dur{font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);padding:3px 9px;border-radius:20px;}
+.divider-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center;margin:24px 0 10px;display:flex;align-items:center;gap:10px;}
+.divider-label::before,.divider-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.day-total{text-align:center;margin-top:24px;padding:18px;background:var(--bg3);border-radius:12px;border:1px solid var(--border);}
+.day-total .num{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--accent);}
+.day-total .lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* ── PLAN SEMANAL DETALLADO ── */
+.toc{display:flex;flex-direction:column;gap:6px;margin-bottom:24px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.toc-item{font-size:13px;color:var(--text);cursor:pointer;padding:6px 8px;border-radius:6px;display:flex;gap:10px;transition:background .15s;}
+.toc-item:hover{background:var(--bg3);}
+.toc-item .n{font-family:var(--mono);color:var(--accent);min-width:24px;}
+
+.month-card{border:1px solid var(--border);margin-bottom:12px;border-radius:14px;overflow:hidden;}
+.month-header{display:flex;align-items:center;gap:16px;padding:18px 22px;cursor:pointer;background:var(--bg2);transition:background .2s;}
+.month-header:hover{background:#141A26;}
+.month-num{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--border);min-width:40px;transition:color .2s;}
+.month-card.open .month-num{color:var(--accent);}
+.month-title-wrap{flex:1;}
+.month-title{font-size:16px;font-weight:600;margin-bottom:3px;}
+.month-sub{font-size:12px;color:var(--muted);}
+.month-chevron{color:var(--muted);font-size:16px;transition:transform .3s;}
+.month-card.open .month-chevron{transform:rotate(180deg);color:var(--accent);}
+.month-body{display:none;background:var(--bg);}
+.month-card.open .month-body{display:block;}
+.week-block{padding:20px 22px;border-top:1px solid var(--border);}
+.week-label{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;}
+.week-title{font-size:15px;font-weight:600;margin-bottom:14px;}
+.concept-box{background:var(--bg2);border-radius:10px;padding:14px 16px;margin-bottom:12px;border-left:3px solid var(--accent3);}
+.concept-box h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.concept-box h4::before{content:'▸';color:var(--accent3);}
+.concept-box p{font-size:13px;color:var(--muted);line-height:1.7;}
+.concept-box .analogy{margin-top:8px;padding:8px 12px;background:rgba(167,139,250,.06);border-radius:6px;font-size:12px;color:#C4B5FD;line-height:1.6;}
+.concept-box .why{margin-top:8px;padding:8px 12px;background:rgba(16,185,129,.06);border-radius:6px;font-size:12px;color:#6EE7B7;line-height:1.6;}
+.resource-line{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.checkpoint{margin-top:14px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:12px 16px;font-size:12px;color:#FBBF24;line-height:1.6;}
+.checkpoint strong{color:var(--text);}
+
+/* ── CALENDARIO ── */
+.cal-controls{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;}
+.cal-btn{font-family:var(--mono);font-size:11px;padding:7px 14px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--muted);transition:all .2s;}
+.cal-btn:hover{border-color:var(--accent);color:var(--accent);}
+.cal-btn.active{border-color:var(--accent);background:rgba(16,185,129,.1);color:var(--accent);}
+.cal-progress{margin-bottom:20px;}
+.cal-prog-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:6px;overflow:hidden;}
+.cal-prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s;}
+.cal-prog-label{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;}
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:8px;}
+.cal-day{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 8px;}
+.cal-day.done{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.3);}
+.cal-day .dnum{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px;}
+.cal-day.done .dnum{color:var(--accent);}
+.cal-tasks{display:flex;flex-direction:column;gap:4px;}
+.cal-task{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);}
+.cal-task input{accent-color:var(--accent);width:12px;height:12px;cursor:pointer;flex-shrink:0;}
+.cal-task.checked label{color:var(--accent);text-decoration:line-through;opacity:.7;}
+.reset-btn{font-family:var(--mono);font-size:11px;border:1px solid var(--border);background:none;color:var(--muted);padding:6px 14px;border-radius:6px;cursor:pointer;margin:20px auto 0;display:block;}
+.reset-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* ── TIPS ── */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+.tip-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.tip-card .tip-icon{font-size:22px;margin-bottom:10px;}
+.tip-card h3{font-size:13px;font-weight:600;margin-bottom:6px;}
+.tip-card p{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ── JOBS ── */
+.jobs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.job-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.job-card h3{font-size:14px;font-weight:600;margin-bottom:4px;}
+.job-card .job-url{font-family:var(--mono);font-size:11px;color:var(--accent3);text-decoration:none;display:block;margin-bottom:8px;}
+.job-card p{font-size:12px;color:var(--muted);line-height:1.5;}
+.salary-big{font-family:var(--mono);font-size:clamp(32px,6vw,56px);font-weight:700;color:var(--accent);display:block;margin:16px 0 6px;text-align:center;}
+.salary-label{font-size:13px;color:var(--muted);text-align:center;display:block;margin-bottom:32px;}
+.salary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-top:16px;}
+.salary-card{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.salary-card .amt{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent2);}
+.salary-card .per{font-size:11px;color:var(--muted);margin-top:2px;}
+.salary-card .lbl{font-size:11px;color:var(--muted);margin-top:6px;}
+
+.footer{text-align:center;padding:40px 20px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:20px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Plan maestro · Data Analyst</div>
+  <h1>8 meses <span class="dim">·</span> 7 horas</h1>
+  <p>Todo en un solo lugar: horario, calendario, plan semana a semana, técnicas de estudio y dónde buscar trabajo.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="v">8</div><div class="l">meses</div></div>
+    <div class="hstat"><div class="v">7h</div><div class="l">diarias</div></div>
+    <div class="hstat"><div class="v">~$300</div><div class="l">inversión</div></div>
+    <div class="hstat"><div class="v">$800+</div><div class="l">primer sueldo</div></div>
+  </div>
+  <div class="credit">Elaborado con Claude Sonnet 5 · Anthropic</div>
+</div>
+
+<div class="nav-wrap">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showTab('sched',this)">⏰ Horario</button>
+    <button class="nav-tab" onclick="showTab('weeks',this)">📖 Semana a semana</button>
+    <button class="nav-tab" onclick="showTab('cal',this)">📅 Calendario</button>
+    <button class="nav-tab" onclick="showTab('tips',this)">🧠 Técnicas</button>
+    <button class="nav-tab" onclick="showTab('jobs',this)">💼 Empleo</button>
+  </div>
+</div>
+
+<!-- ══ TAB: HORARIO ══ -->
+<div id="tab-sched" class="section">
+  <div class="intro-box"><strong>Ajustado tras el día 1:</strong> bajamos de 9 a 7 horas reales, con bloques cortos (video 1h → práctica 1h → descanso 15min) para que sea sostenible todos los días, no solo el primero.</div>
+
+  <div class="divider-label">Mañana — espiritual + inicio</div>
+  <div class="block spirit"><div class="block-head"><span class="block-time">07:00–08:00</span><span class="block-title">Oración personal</span><span class="block-dur">1h</span></div></div>
+
+  <div class="divider-label">Bloque técnico — mañana (3h)</div>
+  <div class="block"><div class="block-head"><span class="block-time">08:00–09:00</span><span class="block-title">Video — tema del día</span><span class="block-dur">1h</span></div></div>
+  <div class="block"><div class="block-head"><span class="block-time">09:00–10:00</span><span class="block-title">Práctica — código sin mirar</span><span class="block-dur">1h</span></div></div>
+  <div class="block rest"><div class="block-head"><span class="block-time">10:00–10:15</span><span class="block-title">Descanso corto</span><span class="block-dur">15 min</span></div></div>
+  <div class="block"><div class="block-head"><span class="block-time">10:15–11:15</span><span class="block-title">Continuación práctica / proyecto del día</span><span class="block-dur">1h</span></div></div>
+
+  <div class="divider-label">Descanso largo</div>
+  <div class="block rest"><div class="block-head"><span class="block-time">11:15–13:00</span><span class="block-title">Almuerzo + descanso real</span><span class="block-dur">1h 45</span></div></div>
+
+  <div class="divider-label">Bloque técnico — tarde (3h)</div>
+  <div class="block"><div class="block-head"><span class="block-time">13:00–14:00</span><span class="block-title">Inglés — Duolingo + BBC</span><span class="block-dur">1h</span></div></div>
+  <div class="block"><div class="block-head"><span class="block-time">14:00–14:45</span><span class="block-title">Matemáticas o SQL (según el mes)</span><span class="block-dur">45 min</span></div></div>
+  <div class="block rest"><div class="block-head"><span class="block-time">14:45–15:00</span><span class="block-title">Descanso corto</span><span class="block-dur">15 min</span></div></div>
+  <div class="block review"><div class="block-head"><span class="block-time">15:00–16:15</span><span class="block-title">GitHub — sube tu avance del día</span><span class="block-dur">1h 15</span></div></div>
+
+  <div class="divider-label">Noche — personal</div>
+  <div class="block spirit"><div class="block-head"><span class="block-time">18:00–18:30</span><span class="block-title">Lectura personal (ligera)</span><span class="block-dur">30 min</span></div></div>
+  <div class="block spirit"><div class="block-head"><span class="block-time">20:00–21:00</span><span class="block-title">Estudio bíblico</span><span class="block-dur">1h</span></div></div>
+  <div class="block review"><div class="block-head"><span class="block-time">21:00–21:20</span><span class="block-title">Técnica Feynman — repaso nocturno</span><span class="block-dur">20 min</span></div></div>
+
+  <div class="day-total">
+    <div class="num">7h estudio técnico · 2h30 vida personal</div>
+    <div class="lbl">Lunes a sábado. Domingo descanso completo del estudio técnico.</div>
+  </div>
+</div>
+
+<!-- ══ TAB: SEMANA A SEMANA ══ -->
+<div id="tab-weeks" class="section" style="display:none">
+  <div class="intro-box"><strong>Cómo usar esta guía:</strong> cada concepto tiene una analogía simple (no la definición técnica sola), por qué te sirve para el trabajo, y un checkpoint para saber si ya puedes avanzar. Los nombres técnicos exactos se refuerzan recién en el mes 7–8, antes de las entrevistas.</div>
+  <div class="toc">
+    <div class="toc-title">Ir directo al mes</div>
+    <div class="toc-item" onclick="openOnly(0)"><span class="n">01</span> Python desde cero</div>
+    <div class="toc-item" onclick="openOnly(1)"><span class="n">02</span> Python intermedio</div>
+    <div class="toc-item" onclick="openOnly(2)"><span class="n">03</span> SQL y bases de datos</div>
+    <div class="toc-item" onclick="openOnly(3)"><span class="n">04</span> Pandas + Excel avanzado + Power Query</div>
+    <div class="toc-item" onclick="openOnly(4)"><span class="n">05</span> Power BI y visualización</div>
+    <div class="toc-item" onclick="openOnly(5)"><span class="n">06</span> Machine Learning básico</div>
+    <div class="toc-item" onclick="openOnly(6)"><span class="n">07</span> ML intermedio + Certificación Google (inicio)</div>
+    <div class="toc-item" onclick="openOnly(7)"><span class="n">08</span> Certificación (fin) + Portafolio + Empleo</div>
+  </div>
+  <div id="months"></div>
+</div>
+
+<!-- ══ TAB: CALENDARIO ══ -->
+<div id="tab-cal" class="section" style="display:none">
+  <div class="cal-controls" id="cal-tabs"></div>
+  <div class="cal-progress">
+    <div class="cal-prog-bar"><div class="cal-prog-fill" id="cal-prog-fill" style="width:0%"></div></div>
+    <div class="cal-prog-label" id="cal-prog-label">0 de 26 días completados</div>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+  <button class="reset-btn" onclick="resetCal()">↺ Reiniciar mes actual</button>
+</div>
+
+<!-- ══ TAB: TIPS ══ -->
+<div id="tab-tips" class="section" style="display:none">
+  <div class="tips-grid">
+    <div class="tip-card"><div class="tip-icon">⚡</div><h3>Pomodoro adaptado</h3><p>Bloques de 1 hora (video o práctica) con descansos de 15 min entre ellos. Alternar así rinde mejor que 2-3 horas seguidas de lo mismo.</p></div>
+    <div class="tip-card"><div class="tip-icon">🎯</div><h3>Fechas límite propias</h3><p>Cada semana ponte una meta clara: "el viernes tengo que poder explicar esto sin mirar nada." Te ayuda a mantener el ritmo bajo presión sana.</p></div>
+    <div class="tip-card"><div class="tip-icon">🧠</div><h3>Técnica Feynman</h3><p>Antes de dormir, explica en voz alta lo aprendido como si le enseñaras a un niño. Si te trabas, no lo sabes aún — repasa ese punto mañana.</p></div>
+    <div class="tip-card"><div class="tip-icon">💻</div><h3>Código sin mirar</h3><p>Después de cada video, ciérralo y escribe el código de memoria. Trabarte ahí es exactamente donde ocurre el aprendizaje real.</p></div>
+    <div class="tip-card"><div class="tip-icon">🎨</div><h3>Colores en tus notas</h3><p>🔵 Azul: concepto nuevo · 🟢 Verde: tu propia analogía · 🔴 Rojo: dudas para repasar · ⚫ Negro: código exacto.</p></div>
+    <div class="tip-card"><div class="tip-icon">📈</div><h3>Sube algo cada día</h3><p>Aunque sea pequeño, sube a GitHub todos los días. Ver tu historial verde de commits te mantiene en racha.</p></div>
+    <div class="tip-card"><div class="tip-icon">🚀</div><h3>Aplica desde el mes 7</h3><p>No esperes a "sentirte listo". Empezar a aplicar antes de terminar genera presión positiva que te hace estudiar mejor.</p></div>
+    <div class="tip-card"><div class="tip-icon">🗣️</div><h3>Prioriza entender, no memorizar</h3><p>No memorices nombres técnicos al inicio. Entiende para qué sirve cada cosa con tus propias palabras — el vocabulario exacto se pule en el mes 7–8.</p></div>
+  </div>
+</div>
+
+<!-- ══ TAB: EMPLEO ══ -->
+<div id="tab-jobs" class="section" style="display:none">
+  <span class="salary-big">$800–1,500</span>
+  <span class="salary-label">USD al mes — primer empleo remoto desde Sucre</span>
+
+  <div class="jobs-grid">
+    <div class="job-card"><h3>Torre.co</h3><a class="job-url" href="https://torre.co" target="_blank">torre.co ↗</a><p>El mejor para empezar. Empleos tech remotos en español. Busca: "data analyst junior remoto".</p></div>
+    <div class="job-card"><h3>Workana</h3><a class="job-url" href="https://workana.com" target="_blank">workana.com ↗</a><p>Freelance en español. Primeros proyectos pequeños para construir reputación e ingresos iniciales.</p></div>
+    <div class="job-card"><h3>LinkedIn Jobs</h3><a class="job-url" href="https://linkedin.com/jobs" target="_blank">linkedin.com/jobs ↗</a><p>Filtra: "data analyst remote junior". Aplica aunque no cumplas el 100% de los requisitos.</p></div>
+    <div class="job-card"><h3>Revelo.io</h3><a class="job-url" href="https://revelo.io" target="_blank">revelo.io ↗</a><p>Empresas de EE.UU. pagando en USD. Meta para el mes 8–10 con inglés B1 consolidado.</p></div>
+  </div>
+
+  <div style="margin-top:32px">
+    <div class="salary-grid">
+      <div class="salary-card"><div class="amt">$800–1.5K</div><div class="per">USD/mes</div><div class="lbl">Mes 8 · Junior remoto</div></div>
+      <div class="salary-card"><div class="amt">$1.5K–2.5K</div><div class="per">USD/mes</div><div class="lbl">Año 2 · Con experiencia</div></div>
+      <div class="salary-card"><div class="amt">$3K–5K</div><div class="per">USD/mes</div><div class="lbl">Año 3+ · Empresas EE.UU.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Plan elaborado con Claude Sonnet 5 · Anthropic · 2026 — Todos los recursos son gratuitos o de bajo costo y verificados</div>
+
+<script>
+const DATA = [
+{
+  title:'Python desde cero', sub:'Fundamentos absolutos — sin esto, nada más funciona',
+  weeks:[
+    {label:'Semana 1', title:'Variables y tipos de datos',
+     concepts:[
+       {h:'¿Qué es una variable?', p:'Un espacio con nombre donde guardas información para usarla después.',
+        analogy:'Analogía: es como una caja con una etiqueta. Le pones "edad" en la etiqueta y adentro guardas el número 25. Cuando quieras usar ese dato, solo buscas la caja por su nombre.',
+        why:'Por qué importa: todo análisis de datos empieza guardando información — un precio, un nombre, una fecha. Sin variables no puedes ni empezar.'},
+       {h:'Tipos de datos: números, texto y verdadero/falso', p:'Python distingue entre números (int, float), texto (string) y valores de verdadero/falso (boolean).',
+        analogy:'Analogía: es como distinguir entre una calculadora (números), una libreta (texto) y un interruptor de luz (verdadero/falso — prendido o apagado).',
+        why:'Por qué importa: cuando analices datos reales, una columna de "precio" es número, una de "nombre de cliente" es texto, y una de "¿pagó o no?" es verdadero/falso. Confundir el tipo rompe el análisis.'},
+     ],
+     resource:'Píldoras Informáticas — primeros 3-4 videos de la playlist',
+     checkpoint:'Antes de pasar a la semana 2: debes poder crear 5 variables distintas (tu nombre, tu edad, tu ciudad, si estudias o no, tu promedio) sin mirar ningún ejemplo.'
+    },
+    {label:'Semana 2', title:'Condicionales — if / else',
+     concepts:[
+       {h:'¿Qué es un condicional?', p:'Una instrucción que le dice al programa: "si pasa esto, haz tal cosa; si no, haz esta otra".',
+        analogy:'Analogía: es como un semáforo para tu código. Si está en verde (se cumple la condición), avanza por un camino. Si está en rojo, va por otro camino distinto.',
+        why:'Por qué importa: como analista, constantemente vas a filtrar datos con lógica de este tipo — "si la venta fue mayor a $1000, márcala como cliente grande; si no, como cliente regular". Todo análisis usa esta lógica.'},
+     ],
+     resource:'Píldoras Informáticas — videos de condicionales (if, elif, else)',
+     checkpoint:'Debes poder escribir un programa que reciba una edad y diga si la persona es menor de edad, adulta o adulta mayor, sin mirar el video.'
+    },
+    {label:'Semana 3', title:'Bucles — for y while',
+     concepts:[
+       {h:'¿Qué es un bucle?', p:'Una instrucción que repite una acción muchas veces automáticamente, hasta que se cumple o deja de cumplirse una condición.',
+        analogy:'Analogía: es como decirle a alguien "revisa cada hoja de este cuaderno, una por una, y anota lo que encuentres en cada una." No revisas tú página por página a mano — el bucle lo hace por ti.',
+        why:'Por qué importa: si tienes una base de datos de 10,000 clientes y necesitas revisar cada uno, jamás lo harías a mano. El bucle es lo que hace posible el análisis de datos a gran escala.'},
+     ],
+     resource:'Píldoras Informáticas — videos de bucles for y while',
+     checkpoint:'Debes poder escribir un bucle que sume los números del 1 al 100 automáticamente, y otro que recorra una lista de nombres y los salude uno por uno.'
+    },
+    {label:'Semana 4', title:'Funciones',
+     concepts:[
+       {h:'¿Qué es una función?', p:'Un bloque de código reutilizable al que le das una tarea específica, y lo puedes usar cuantas veces quieras sin reescribirlo.',
+        analogy:'Analogía: es como una receta de cocina que guardas. Cada vez que quieres hacer ese plato, no reinventas la receta — solo sigues los pasos que ya escribiste, cambiando algún ingrediente si hace falta.',
+        why:'Por qué importa: casi todas las herramientas que usarás después (Pandas, scikit-learn) son, en el fondo, miles de funciones que otros ya escribieron. Entender cómo funciona una función te ayuda a entender cómo usar esas herramientas.'},
+     ],
+     resource:'Píldoras Informáticas — videos de funciones y parámetros',
+     checkpoint:'Proyecto de cierre del mes: Calculadora de IMC + Gestor de gastos personales, usando variables, condicionales, bucles y funciones juntos. Sube ambos a GitHub.'
+    },
+  ]
+},
+{
+  title:'Python intermedio', sub:'Aprendes a manejar datos organizados, no solo números sueltos',
+  weeks:[
+    {label:'Semana 1', title:'Listas y sus operaciones',
+     concepts:[
+       {h:'¿Qué es una lista?', p:'Una colección ordenada de datos que guardas juntos, como una fila de cajas numeradas.',
+        analogy:'Analogía: es como una lista de compras en el supermercado. Cada producto tiene un lugar en la lista (posición 1, 2, 3...) y puedes agregar, quitar o revisar productos.',
+        why:'Por qué importa: cualquier columna de datos (todos los precios, todos los nombres de clientes) se maneja como una lista. Es la base para trabajar con datos en grupo, no de uno en uno.'},
+     ],
+     resource:'freeCodeCamp — sección de listas del curso completo',
+     checkpoint:'Debes poder crear una lista de 10 productos con precios y calcular el total, el más caro y el más barato, sin mirar ejemplos.'
+    },
+    {label:'Semana 2', title:'Diccionarios',
+     concepts:[
+       {h:'¿Qué es un diccionario?', p:'Una forma de guardar datos en pares de "clave" y "valor", donde buscas por la clave para encontrar el valor.',
+        analogy:'Analogía: es como una agenda telefónica. No buscas el número por posición ("el número 47 de la lista") — buscas por nombre ("¿cuál es el número de Juan?") y el diccionario te lo da al instante.',
+        why:'Por qué importa: los datos reales casi nunca vienen en listas simples — vienen con etiquetas. Un cliente tiene nombre, teléfono, ciudad, todo junto. Los diccionarios son cómo organizas eso.'},
+     ],
+     resource:'freeCodeCamp — sección de diccionarios',
+     checkpoint:'Crea una agenda de 5 contactos (nombre, teléfono, ciudad) usando diccionarios, y busca la información de uno por su nombre.'
+    },
+    {label:'Semana 3', title:'Lectura y escritura de archivos',
+     concepts:[
+       {h:'¿Por qué guardar datos en archivos?', p:'Hasta ahora, todo lo que escribes se borra al cerrar el programa. Guardar en archivos permite que la información quede guardada para usar después.',
+        analogy:'Analogía: es la diferencia entre escribir algo en una pizarra (se borra) y escribirlo en un cuaderno (queda guardado para siempre, incluso si cierras el cuaderno).',
+        why:'Por qué importa: en el trabajo real, los datos vienen guardados en archivos (Excel, CSV). Necesitas saber leerlos y, a veces, guardar resultados nuevos en un archivo.'},
+     ],
+     resource:'freeCodeCamp — sección de manejo de archivos (open, read, write)',
+     checkpoint:'Debes poder guardar tu lista de gastos en un archivo .txt y volver a leerla después de cerrar el programa.'
+    },
+    {label:'Semana 4', title:'Módulos y librerías + proyecto',
+     concepts:[
+       {h:'¿Qué es un módulo o librería?', p:'Código que otras personas ya escribieron y que puedes usar en tu programa sin tener que reescribirlo tú.',
+        analogy:'Analogía: es como comprar una herramienta ya hecha en la ferretería en vez de fabricarla tú mismo desde cero. Alguien ya resolvió ese problema — tú solo la usas.',
+        why:'Por qué importa: Pandas, la herramienta que usarás desde el mes 4, es justamente eso — una librería hecha por otros para que tú analices datos sin programar todo desde cero.'},
+     ],
+     resource:'Video introductorio de librerías en Python (buscar "import en Python explicado")',
+     checkpoint:'Proyecto de cierre del mes: Agenda de contactos completa (usando diccionarios + archivos) subida a GitHub con un README explicando qué hace.'
+    },
+  ]
+},
+{
+  title:'SQL y bases de datos', sub:'El lenguaje que usan todas las empresas para consultar datos',
+  weeks:[
+    {label:'Semana 1', title:'SELECT y WHERE — lo básico de consultar',
+     concepts:[
+       {h:'¿Qué es SQL?', p:'Un lenguaje diseñado específicamente para pedirle información a una base de datos, sin necesidad de revisarla manualmente.',
+        analogy:'Analogía: es como hacerle una pregunta muy específica a un bibliotecario en vez de buscar libro por libro tú mismo. Le dices exactamente qué buscas y te lo entrega.',
+        why:'Por qué importa: casi toda empresa guarda su información en bases de datos. SQL es la forma universal de sacar esa información — sin SQL, no puedes acceder a los datos reales de una empresa.'},
+       {h:'SELECT y WHERE', p:'SELECT elige qué columnas quieres ver. WHERE filtra solo las filas que cumplen una condición.',
+        analogy:'Analogía: SELECT es decir "quiero ver solo el nombre y el precio" (no toda la información). WHERE es decir "pero solo de los productos que cuestan más de $50".',
+        why:'Por qué importa: el 80% de las preguntas de negocio se responden con un buen SELECT + WHERE. Es la base de todo lo demás en SQL.'},
+     ],
+     resource:'SQLZoo — módulo 1 (SELECT basics)',
+     checkpoint:'Debes poder escribir una consulta que muestre solo los países con más de 50 millones de habitantes, usando el módulo de práctica de SQLZoo.'
+    },
+    {label:'Semana 2', title:'GROUP BY y funciones de agregación',
+     concepts:[
+       {h:'¿Qué es agrupar datos?', p:'En vez de ver cada fila individual, agrupas datos similares y calculas un resumen (total, promedio, cantidad) por grupo.',
+        analogy:'Analogía: en vez de ver cada venta individual de la tienda, agrupas por vendedor y ves "cuánto vendió cada uno en total" — un resumen, no el detalle de cada transacción.',
+        why:'Por qué importa: las empresas casi nunca preguntan "muéstrame cada venta". Preguntan "¿cuánto vendimos por mes?" o "¿cuál es el producto más vendido?" — eso es GROUP BY.'},
+     ],
+     resource:'SQLZoo — módulo de agregación (SUM, COUNT, AVG)',
+     checkpoint:'Debes poder calcular el promedio de población por continente usando GROUP BY, sin mirar la respuesta.'
+    },
+    {label:'Semana 3', title:'JOIN — conectar tablas distintas',
+     concepts:[
+       {h:'¿Qué es un JOIN?', p:'Una forma de combinar información que está guardada en tablas distintas pero relacionadas entre sí.',
+        analogy:'Analogía: imagina dos cuadernos separados — uno con nombres de estudiantes y otro con sus notas. JOIN es la acción de unir ambos cuadernos usando el nombre como punto en común, para ver nombre y nota juntos.',
+        why:'Por qué importa: en el mundo real, los datos casi nunca están en una sola tabla. Los clientes están en una tabla, sus compras en otra. JOIN es lo que te permite ver la historia completa.'},
+     ],
+     resource:'SQLZoo — módulo de JOIN',
+     checkpoint:'Debes poder unir una tabla de estudiantes con una de notas y mostrar el nombre junto a su promedio, sin ayuda.'
+    },
+    {label:'Semana 4', title:'Práctica integrada + proyecto',
+     concepts:[
+       {h:'Repaso: combinando todo', p:'Esta semana no hay concepto nuevo — es aplicar SELECT, WHERE, GROUP BY y JOIN juntos en un caso real.',
+        analogy:'Analogía: es como aprender a manejar cada pieza de un motor por separado, y esta semana armas el motor completo.',
+        why:'Por qué importa: en una entrevista real, casi nunca te preguntan solo un concepto — te dan un problema que necesita varias herramientas juntas.'},
+     ],
+     resource:'SQLZoo — módulos finales + práctica libre',
+     checkpoint:'Proyecto de cierre del mes: Base de datos de estudiantes en SQLite con tablas de cursos y notas. Escribe consultas para el promedio general, el mejor alumno y la materia más difícil. Sube a GitHub.'
+    },
+  ]
+},
+{
+  title:'Pandas + Excel avanzado + Power Query', sub:'Analizas datos reales de tres formas distintas — y las comparas',
+  weeks:[
+    {label:'Semana 1', title:'Pandas — DataFrames',
+     concepts:[
+       {h:'¿Qué es un DataFrame?', p:'La forma en que Pandas organiza datos en una tabla, con filas y columnas, como una hoja de Excel pero dentro de Python.',
+        analogy:'Analogía: es exactamente como una hoja de cálculo de Excel, pero la manejas escribiendo código en vez de haciendo clic. La ventaja es que puedes procesar miles de filas en segundos.',
+        why:'Por qué importa: Pandas es la herramienta número 1 para análisis de datos con Python en el mundo real. Casi todo Data Analyst la usa a diario.'},
+     ],
+     resource:'freeCodeCamp — Análisis de Datos con Python (primera mitad)',
+     checkpoint:'Debes poder cargar un archivo CSV de Kaggle en un DataFrame y mostrar las primeras 10 filas, sin ayuda.'
+    },
+    {label:'Semana 2', title:'Limpieza de datos con Pandas',
+     concepts:[
+       {h:'¿Por qué "limpiar" datos?', p:'Los datos reales casi siempre vienen con errores: espacios de más, valores vacíos, formatos distintos. Limpiarlos es corregir eso antes de analizar.',
+        analogy:'Analogía: es como recibir una caja de frutas donde algunas están podridas o mal etiquetadas. Antes de vender, revisas y separas lo que sirve de lo que no.',
+        why:'Por qué importa: se dice que un Data Analyst pasa el 60-80% de su tiempo limpiando datos, no analizando. Es la habilidad más usada del trabajo real, aunque menos glamorosa.'},
+     ],
+     resource:'freeCodeCamp — Análisis de Datos con Python (segunda mitad, limpieza)',
+     checkpoint:'Proyecto de las 2 primeras semanas: análisis completo de un dataset de ventas de Kaggle — total por mes, producto más vendido, día más rentable.'
+    },
+    {label:'Semana 3', title:'Excel avanzado — tablas dinámicas y fórmulas',
+     concepts:[
+       {h:'¿Qué es una tabla dinámica?', p:'Una herramienta de Excel que resume miles de filas de datos en una tabla pequeña y clara, sin que tengas que escribir fórmulas complicadas.',
+        analogy:'Analogía: es como pedirle a un asistente que agarre una montaña de recibos desordenados y te entregue un resumen de una página con los totales que te interesan.',
+        why:'Por qué importa: muchísimas empresas, sobre todo pequeñas y medianas, todavía trabajan principalmente en Excel. Dominarlo te abre más puertas de las que crees, y hace que Power BI (mes 5) sea mucho más fácil de entender.'},
+       {h:'Fórmulas clave: BUSCARV/VLOOKUP, SI/IF, SUMAR.SI', p:'Fórmulas que buscan datos automáticamente, aplican condiciones, y suman solo lo que cumple cierto criterio.',
+        analogy:'Analogía: BUSCARV es como preguntarle a Excel "busca este nombre en la otra hoja y tráeme su precio" — sin que tú lo busques a mano.',
+        why:'Por qué importa: estas 3 fórmulas cubren la mayoría de tareas de análisis básico que pide cualquier empresa.'},
+     ],
+     resource:'Buscar en YouTube: "Excel avanzado tablas dinámicas español" (canales como ExcelTotal)',
+     checkpoint:'Replica el mismo análisis de ventas que hiciste con Pandas, ahora con una tabla dinámica en Excel. Compara ambos resultados — deben coincidir.'
+    },
+    {label:'Semana 4', title:'Power Query — limpiar datos sin código',
+     concepts:[
+       {h:'¿Qué es Power Query?', p:'Una herramienta dentro de Excel y Power BI que limpia y transforma datos usando clics, en vez de escribir código como en Pandas.',
+        analogy:'Analogía: si Pandas es limpiar la casa con las manos (control total, pero más trabajo), Power Query es usar una aspiradora robot — más rápido para tareas repetitivas de limpieza.',
+        why:'Por qué importa: en el mundo laboral, muchos analistas usan Power Query para limpiar datos antes de llevarlos a Power BI, sin necesidad de programar. Es una habilidad muy pedida en ofertas de trabajo.'},
+     ],
+     resource:'Buscar en YouTube: "Power Query desde cero español"',
+     checkpoint:'Proyecto de cierre del mes: el mismo dataset de ventas limpiado y transformado con Power Query. Ahora tienes el mismo análisis hecho de 3 formas — Python, Excel y Power Query. Anota qué método te resultó más rápido para cada tarea.'
+    },
+  ]
+},
+{
+  title:'Power BI y visualización', sub:'Conviertes datos en historias visuales que cualquiera entiende',
+  weeks:[
+    {label:'Semana 1', title:'Power BI Desktop — primeros pasos',
+     concepts:[
+       {h:'¿Qué es Power BI?', p:'Un programa que conecta con tus datos (Excel, bases de datos) y te permite crear gráficos y reportes interactivos sin programar.',
+        analogy:'Analogía: si Excel es una calculadora con hojas, Power BI es como armar un tablero de control de auto — con indicadores visuales que cualquiera entiende de un vistazo, sin leer números sueltos.',
+        why:'Por qué importa: Power BI es una de las herramientas más pedidas en ofertas de trabajo de Data Analyst en toda Latinoamérica. Empresas de todos los tamaños la usan.'},
+     ],
+     resource:'Datdata (YouTube) — primeros videos de la playlist de Power BI',
+     checkpoint:'Debes poder conectar un archivo Excel a Power BI y crear tu primer gráfico de barras simple.'
+    },
+    {label:'Semana 2', title:'Gráficos, filtros y relaciones entre tablas',
+     concepts:[
+       {h:'Tipos de gráficos y cuándo usar cada uno', p:'Barras para comparar categorías, líneas para mostrar cambios en el tiempo, mapas para datos geográficos, tortas para proporciones (con cuidado, se abusa mucho de ellas).',
+        analogy:'Analogía: elegir el gráfico correcto es como elegir la herramienta correcta — no usas un martillo para atornillar. Cada gráfico "dice" algo distinto sobre los datos.',
+        why:'Por qué importa: un gráfico mal elegido confunde en vez de aclarar. Un buen analista sabe qué gráfico comunica mejor cada tipo de dato.'},
+     ],
+     resource:'Datdata (YouTube) — videos de filtros y relaciones',
+     checkpoint:'Debes poder crear un reporte con al menos 3 tipos de gráficos distintos conectados entre sí por filtros.'
+    },
+    {label:'Semana 3', title:'Matplotlib y Seaborn — gráficos desde Python',
+     concepts:[
+       {h:'¿Por qué graficar también desde Python?', p:'Matplotlib y Seaborn son librerías para crear gráficos directamente desde tu código Python, útil cuando el análisis ya está en Pandas.',
+        analogy:'Analogía: si Power BI es como usar una cámara automática (apunta y dispara), Matplotlib es como una cámara profesional manual — más control, pero necesitas saber qué estás haciendo.',
+        why:'Por qué importa: en análisis más técnicos o en Machine Learning (próximo mes), necesitas graficar directo desde Python, sin pasar por Power BI.'},
+     ],
+     resource:'freeCodeCamp — Matplotlib y Seaborn en español',
+     checkpoint:'Debes poder graficar tu dataset de ventas con al menos 2 tipos de gráficos usando Matplotlib, sin mirar ejemplos.'
+    },
+    {label:'Semana 4', title:'Proyecto integrador — dashboard completo',
+     concepts:[
+       {h:'Storytelling con datos', p:'No basta con hacer gráficos bonitos — el objetivo es contar una historia clara: qué pasó, por qué importa, y qué se debería hacer.',
+        analogy:'Analogía: un buen dashboard es como un buen artículo de noticias — tiene un titular claro (lo más importante primero), no solo una lista de datos sueltos.',
+        why:'Por qué importa: esta es la diferencia entre alguien que "sabe usar Power BI" y alguien que realmente comunica bien con datos. Es lo que más valoran los empleadores.'},
+     ],
+     resource:'Datos del Banco Mundial sobre Bolivia (datos reales para tu proyecto)',
+     checkpoint:'Proyecto de cierre del mes: Dashboard de economía boliviana en Power BI (PIB, inflación, desempleo) con al menos 4 visualizaciones conectadas. Sube capturas a GitHub.'
+    },
+  ]
+},
+{
+  title:'Machine Learning básico', sub:'Tu primer modelo que predice algo — aquí la IA se vuelve real',
+  weeks:[
+    {label:'Semana 1', title:'¿Qué es Machine Learning realmente?',
+     concepts:[
+       {h:'La idea central de ML', p:'En vez de programar reglas exactas, le muestras al modelo muchos ejemplos, y él mismo encuentra el patrón.',
+        analogy:'Analogía: es como enseñarle a un niño a reconocer perros, no dándole una lista de reglas ("4 patas, pelo, ladra"), sino mostrándole 1000 fotos de perros y gatos hasta que él mismo aprenda a distinguirlos.',
+        why:'Por qué importa: esto es literalmente la base de todo lo que hoy llamamos "IA" — desde reconocimiento de imágenes hasta recomendaciones de Netflix.'},
+     ],
+     resource:'Andrew Ng — Machine Learning Specialization, curso 1, primera semana',
+     checkpoint:'Debes poder explicarle a alguien (técnica Feynman) qué es Machine Learning sin usar la palabra "algoritmo".'
+    },
+    {label:'Semana 2', title:'Regresión — predecir números',
+     concepts:[
+       {h:'¿Qué es una regresión?', p:'Un modelo que predice un número (como un precio) basándose en otros datos relacionados.',
+        analogy:'Analogía: es como cuando alguien con experiencia en bienes raíces mira una casa y "adivina" su precio basándose en el tamaño, la ubicación y cuántas habitaciones tiene. La regresión hace lo mismo, pero con matemáticas y datos de miles de casas.',
+        why:'Por qué importa: predecir números (ventas futuras, precios, demanda) es una de las tareas más pedidas a un analista con conocimientos de IA.'},
+     ],
+     resource:'Andrew Ng — curso 1, semana de regresión lineal',
+     checkpoint:'Debes poder explicar con tus palabras qué significa que un modelo "se equivoque menos" al predecir precios.'
+    },
+    {label:'Semana 3', title:'scikit-learn — llevando la teoría a código',
+     concepts:[
+       {h:'¿Qué es scikit-learn?', p:'La librería de Python más usada para crear modelos de Machine Learning sin tener que programar las matemáticas desde cero.',
+        analogy:'Analogía: es como usar una batidora en vez de batir a mano — la tecnología (matemáticas complejas) ya está resuelta por otros, tú solo la usas con unas pocas líneas de código.',
+        why:'Por qué importa: en el trabajo real, casi nadie programa un modelo de ML desde cero — se usa scikit-learn u otras librerías similares.'},
+     ],
+     resource:'Kaggle Learn — Intro to Machine Learning',
+     checkpoint:'Debes poder entrenar un modelo simple de regresión con scikit-learn usando un dataset de ejemplo, sin mirar el tutorial completo.'
+    },
+    {label:'Semana 4', title:'Proyecto — predicción de precios',
+     concepts:[
+       {h:'De la teoría a un proyecto real', p:'Esta semana no hay concepto nuevo — aplicas regresión y scikit-learn juntos en un caso real de principio a fin.',
+        analogy:'Analogía: es la diferencia entre "saber nadar en la piscina de práctica" y "nadar en el mar de verdad" — mismas habilidades, pero ahora sin ayuda.',
+        why:'Por qué importa: este será tu primer proyecto de Machine Learning real que puedes mostrar en tu portafolio y explicar en una entrevista.'},
+     ],
+     resource:'Dataset de Boston Housing en Kaggle',
+     checkpoint:'Proyecto de cierre del mes: Modelo de predicción de precios de casas con regresión lineal, entrenado, evaluado y subido a GitHub con explicación de los resultados.'
+    },
+  ]
+},
+{
+  title:'ML intermedio + Certificación Google (inicio)', sub:'Modelos más potentes + empiezas tu certificación oficial',
+  weeks:[
+    {label:'Semana 1', title:'Clasificación y Random Forest',
+     concepts:[
+       {h:'¿Qué es clasificación?', p:'A diferencia de la regresión (predecir números), la clasificación predice categorías — sí/no, tipo A/B/C.',
+        analogy:'Analogía: si la regresión es "¿cuánto costará esta casa?", la clasificación es "¿este cliente cancelará el servicio o no?" — una respuesta de categoría, no un número exacto.',
+        why:'Por qué importa: muchísimas decisiones de negocio son de este tipo — "¿es fraude o no?", "¿el cliente comprará o no?". Es de los usos más comunes de ML en empresas reales.'},
+       {h:'Random Forest', p:'Un modelo que combina muchos "árboles de decisión" pequeños para tomar una decisión más precisa entre todos juntos.',
+        analogy:'Analogía: es como pedir la opinión de 100 expertos en vez de uno solo, y quedarte con lo que dice la mayoría — reduce el error de confiar en una sola perspectiva.',
+        why:'Por qué importa: es uno de los modelos más usados en la industria porque es preciso y relativamente fácil de explicar a alguien no técnico.'},
+     ],
+     resource:'Andrew Ng — curso 2 (clasificación) + Kaggle Learn Intermediate ML',
+     checkpoint:'Debes poder explicar la diferencia entre regresión y clasificación con un ejemplo propio, no el del curso.'
+    },
+    {label:'Semana 2', title:'Evaluación de modelos',
+     concepts:[
+       {h:'¿Cómo saber si un modelo es bueno?', p:'Se usan métricas como accuracy (cuántas veces acertó), precision y recall, para medir qué tan confiable es un modelo antes de usarlo de verdad.',
+        analogy:'Analogía: es como revisar las calificaciones de un estudiante antes de contratarlo para un trabajo — no basta con que "diga que sabe", necesitas evidencia medible.',
+        why:'Por qué importa: en una entrevista, te van a preguntar "¿cómo sabes que tu modelo funciona bien?" — si no sabes evaluarlo, no puedes responder con seguridad.'},
+     ],
+     resource:'Kaggle Learn — Intermediate Machine Learning (sección de evaluación)',
+     checkpoint:'Debes poder calcular e interpretar el accuracy de un modelo simple de clasificación.'
+    },
+    {label:'Semana 3', title:'Certificación Google — módulos 1 a 3',
+     concepts:[
+       {h:'Empezando el certificado oficial', p:'El curso de Google Data Analytics en Coursera cubre fundamentos, preparación de datos y limpieza — temas que ya conoces por tu plan, así que avanzará más rápido de lo esperado.',
+        analogy:'Analogía: es como rendir un examen de un tema que ya estudiaste por tu cuenta — repasas y confirmas, no aprendes todo desde cero.',
+        why:'Por qué importa: esta certificación es reconocida por muchos empleadores y te da un respaldo oficial además de tus proyectos.'},
+     ],
+     resource:'Coursera — Google Data Analytics Certificate, módulos 1-3',
+     checkpoint:'Debes completar los quizzes de los primeros 3 módulos con buena calificación.'
+    },
+    {label:'Semana 4', title:'Proyecto de clasificación + continuar certificación',
+     concepts:[
+       {h:'Aplicando clasificación a un caso real', p:'Esta semana construyes un modelo real de predicción de abandono de clientes (churn), muy pedido en entrevistas de trabajo.',
+        analogy:'Analogía: churn es como predecir qué suscriptores de un servicio de streaming están a punto de cancelar, antes de que lo hagan — para poder ofrecerles algo y retenerlos.',
+        why:'Por qué importa: este es uno de los proyectos de portafolio más valorados en entrevistas de Data Analyst, porque es un problema real que toda empresa quiere resolver.'},
+     ],
+     resource:'Dataset de Telco Customer Churn en Kaggle',
+     checkpoint:'Proyecto de cierre del mes: Modelo de predicción de churn con Random Forest, evaluado con métricas claras, subido a GitHub con README profesional.'
+    },
+  ]
+},
+{
+  title:'Certificación (fin) + Portafolio + Empleo', sub:'El mes donde te presentas al mundo laboral',
+  weeks:[
+    {label:'Semana 1', title:'Certificación Google — módulos 4 a 6',
+     concepts:[
+       {h:'Análisis y storytelling con datos', p:'Estos módulos enseñan a analizar datos para responder preguntas de negocio y comunicar resultados de forma clara — habilidades que ya practicaste en tus proyectos.',
+        analogy:'Analogía: es la parte del curso donde te enseñan a "contar la historia" de los datos — algo que ya hiciste en tu dashboard de Power BI del mes 5.',
+        why:'Por qué importa: comunicar resultados es tan importante como analizarlos. Un análisis brillante que nadie entiende no sirve de nada en una empresa.'},
+     ],
+     resource:'Coursera — Google Data Analytics Certificate, módulos 4-6',
+     checkpoint:'Completar los quizzes de los módulos 4, 5 y 6.'
+    },
+    {label:'Semana 2', title:'Certificación Google — módulos 7 y 8 + proyecto final del curso',
+     concepts:[
+       {h:'Proyecto final de la certificación', p:'El módulo 8 te pide construir un proyecto de análisis completo — puedes usar el mismo tema que ya trabajaste en tus proyectos anteriores, adaptado al formato que piden.',
+        analogy:'Analogía: es como presentar tu tesis final usando investigación que ya hiciste antes, solo organizada para esta entrega específica.',
+        why:'Por qué importa: terminar la certificación te da el respaldo oficial que complementa (no reemplaza) tus proyectos de portafolio.'},
+     ],
+     resource:'Coursera — módulos 7-8 y proyecto final',
+     checkpoint:'Obtener el certificado completo de Google Data Analytics.'
+    },
+    {label:'Semana 3', title:'Portafolio final + GitHub + LinkedIn',
+     concepts:[
+       {h:'Tu proyecto integrador', p:'Un análisis completo de un tema que te apasione, usando Python, SQL, Excel/Power Query y Power BI juntos — el resumen de todo lo aprendido.',
+        analogy:'Analogía: es como el plato final de un chef en un concurso de cocina — usa todas las técnicas que aprendió, no solo una.',
+        why:'Por qué importa: este es el proyecto que más van a mirar los empleadores. Debe estar bien presentado, con un README claro explicando el problema, el proceso y las conclusiones.'},
+       {h:'Perfil de LinkedIn optimizado', p:'Tu presencia profesional online, con tu certificación, tus proyectos y tus habilidades bien descritas.',
+        analogy:'Analogía: es tu vitrina de tienda — el lugar donde un empleador "pasa caminando" y decide si entra a ver más o sigue de largo.',
+        why:'Por qué importa: muchos reclutadores buscan candidatos directamente en LinkedIn antes de que tú apliques a algo.'},
+     ],
+     resource:'GitHub (organiza tus 5-6 proyectos) + LinkedIn (crea o actualiza tu perfil)',
+     checkpoint:'Debes tener tu proyecto integrador terminado, tu GitHub organizado con README en cada proyecto, y tu LinkedIn actualizado con la certificación.'
+    },
+    {label:'Semana 4', title:'Aplicar a empleos + entrevistas',
+     concepts:[
+       {h:'Aplicación activa', p:'Esta semana dejas de estudiar contenido nuevo y te dedicas a aplicar a empleos todos los días, sin esperar a "sentirte listo".',
+        analogy:'Analogía: es como aprender a nadar — en algún momento tienes que soltarte del borde de la piscina, aunque no te sientas 100% seguro.',
+        why:'Por qué importa: la mayoría de analistas junior consiguen su primer trabajo aplicando de forma constante, no esperando el momento perfecto.'},
+       {h:'Preparación de entrevistas en inglés básico', p:'Practica preguntas típicas: "cuéntame de un proyecto que hiciste", "¿cómo limpiarías datos sucios?", "¿qué es un JOIN?" — en inglés simple.',
+        analogy:'Analogía: es como ensayar antes de una obra de teatro — practicar las preguntas más probables te da seguridad el día real.',
+        why:'Por qué importa: muchas empresas remotas hacen al menos una parte de la entrevista en inglés, aunque sea básico.'},
+     ],
+     resource:'Torre.co, Workana, LinkedIn Jobs — aplica 2 veces al día. Practica entrevistas conmigo (Claude) en inglés.',
+     checkpoint:'Meta de la semana: mínimo 10 aplicaciones enviadas y 2 simulacros de entrevista completos conmigo.'
+    },
+  ]
+},
+];
+
+function renderMonths(){
+  const c=document.getElementById('months');
+  c.innerHTML=DATA.map((m,i)=>`
+    <div class="month-card" id="mc-${i}">
+      <div class="month-header" onclick="toggleMonth(${i})">
+        <div class="month-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="month-title-wrap">
+          <div class="month-title">${m.title}</div>
+          <div class="month-sub">${m.sub}</div>
+        </div>
+        <div class="month-chevron">▾</div>
+      </div>
+      <div class="month-body">
+        ${m.weeks.map(w=>`
+          <div class="week-block">
+            <div class="week-label">${w.label}</div>
+            <div class="week-title">${w.title}</div>
+            ${w.concepts.map(cn=>`
+              <div class="concept-box">
+                <h4>${cn.h}</h4>
+                <p>${cn.p}</p>
+                <div class="analogy">💡 ${cn.analogy}</div>
+                <div class="why">🎯 ${cn.why}</div>
+              </div>
+            `).join('')}
+            <div class="resource-line">📚 Recurso: ${w.resource}</div>
+            <div class="checkpoint"><strong>Checkpoint:</strong> ${w.checkpoint}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+function toggleMonth(i){document.getElementById('mc-'+i).classList.toggle('open');}
+function openOnly(i){
+  document.querySelectorAll('.month-card').forEach((el,idx)=>{el.classList.toggle('open', idx===i);});
+  showTab('weeks', document.querySelectorAll('.nav-tab')[1]);
+  setTimeout(()=>document.getElementById('mc-'+i).scrollIntoView({behavior:'smooth', block:'start'}), 50);
+}
+
+// ── CALENDARIO ──
+let calMonth=0;
+function renderCalTabs(){
+  const c=document.getElementById('cal-tabs');
+  c.innerHTML=DATA.map((m,i)=>`<button class="cal-btn${i===calMonth?' active':''}" onclick="setCalMonth(${i},this)">Mes ${String(i+1).padStart(2,'0')}</button>`).join('');
+}
+const CAL_TASKS = [
+  ['Python (video)','Práctica código','Inglés','Matemáticas'],
+  ['Python avanzado','Práctica código','Inglés','SQL básico'],
+  ['SQL (SQLZoo)','Práctica SQL','Inglés','Matemáticas'],
+  ['Pandas / Excel','Práctica del día','Inglés','Proyecto Kaggle'],
+  ['Power BI (video)','Matplotlib práctica','Inglés','Dashboard del día'],
+  ['ML (Andrew Ng)','scikit-learn práctica','Inglés','Proyecto ML'],
+  ['ML intermedio','Certificación Google','Inglés','Proyecto ML'],
+  ['Pulir GitHub','Aplicar empleos','Inglés entrevistas','LinkedIn activo'],
+];
+function setCalMonth(i,btn){calMonth=i;document.querySelectorAll('.cal-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderCalGrid();}
+function calKey(d,tk){return `calmaster_m${calMonth}_d${d}_${tk}`;}
+function getCS(d,tk){try{return localStorage.getItem(calKey(d,tk))==='1';}catch(e){return false;}}
+function setCS(d,tk,v){try{localStorage.setItem(calKey(d,tk),v?'1':'0');}catch(e){}}
+function isDayDone(d){return CAL_TASKS[calMonth].every(t=>getCS(d,t));}
+function countDone(){let n=0;for(let d=1;d<=26;d++)if(isDayDone(d))n++;return n;}
+function renderCalGrid(){
+  const tasks=CAL_TASKS[calMonth];
+  const g=document.getElementById('cal-grid');
+  g.innerHTML='';
+  for(let d=1;d<=26;d++){
+    const done=isDayDone(d);
+    const div=document.createElement('div');
+    div.className='cal-day'+(done?' done':'');
+    div.innerHTML=`<div class="dnum">Día ${d}</div><div class="cal-tasks">${tasks.map(t=>{
+      const chk=getCS(d,t);
+      const safeId='cm_'+d+'_'+t.replace(/[^a-zA-Z0-9]/g,'');
+      return `<div class="cal-task${chk?' checked':''}"><input type="checkbox" id="${safeId}" ${chk?'checked':''} data-d="${d}" data-t="${t}"><label for="${safeId}">${t}</label></div>`;
+    }).join('')}</div>`;
+    g.appendChild(div);
+  }
+  document.querySelectorAll('.cal-task input').forEach(cb=>{
+    cb.addEventListener('change',function(){setCS(this.dataset.d,this.dataset.t,this.checked);renderCalGrid();});
+    cb.addEventListener('click',e=>e.stopPropagation());
+  });
+  const done=countDone();const pct=Math.round(done/26*100);
+  document.getElementById('cal-prog-fill').style.width=pct+'%';
+  document.getElementById('cal-prog-label').textContent=`${done} de 26 días completados (${pct}%)`;
+}
+function resetCal(){
+  if(!confirm('¿Reiniciar el mes actual?'))return;
+  for(let d=1;d<=26;d++)CAL_TASKS[calMonth].forEach(t=>{try{localStorage.removeItem(calKey(d,t));}catch(e){}});
+  renderCalGrid();
+}
+
+// ── TABS ──
+function showTab(name,btn){
+  ['sched','weeks','cal','tips','jobs'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===name?'block':'none';
+  });
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(name==='cal'){renderCalTabs();renderCalGrid();}
+}
+
+renderMonths();
+</script>
+</body>
+</html>
